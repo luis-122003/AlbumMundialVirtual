@@ -1,0 +1,61 @@
+services:
+  db:
+    image: postgres:15
+    container_name: panini_db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: panini_user
+      POSTGRES_PASSWORD: panini_pass
+      POSTGRES_DB: panini_mundial
+      POSTGRES_HOST_AUTH_METHOD: md5
+      POSTGRES_INITDB_ARGS: "--auth-host=md5 --auth-local=md5"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./database:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U panini_user -d panini_mundial"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: panini_backend
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: panini_mundial
+      DB_USER: panini_user
+      DB_PASSWORD: panini_pass
+      JWT_SECRET: panini_jwt_secret_2026
+      PORT: 8080
+
+  pdAdmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_panini
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - 8081:80
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=alumno@google.com
+      - PGADMIN_DEFAULT_PASSWORD=123456
+    volumes:
+      - ./pgadmin:/var/lib/pgadmin
+      - ./pgadmin:/certs/server.cert
+      - ./pgadmin:/certs/server.key
+      - ./pgadmin:/pgadmin4/servers.json
+
+volumes:
+  pgdata:

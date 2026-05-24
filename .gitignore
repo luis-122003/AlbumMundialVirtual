@@ -1,0 +1,4 @@
+requerimientos/
+.claude/
+node_modules/
+backend/.env
