@@ -67,7 +67,7 @@ class AppTheme {
       // =========================
       // CARD
       // =========================
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: cardColor,
         elevation: 0,
         shadowColor: Colors.black.withOpacity(0.1),
@@ -296,14 +296,14 @@ class AppTheme {
       // =========================
       // CARD
       // =========================
-      cardTheme: CardTheme(
-        color: darkCardColor,
-        elevation: 0,
-        shadowColor: Colors.black.withOpacity(0.3),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radius),
-        ),
-      ),
+ cardTheme: CardThemeData(
+  color: darkCardColor,
+  elevation: 0,
+  shadowColor: Colors.black.withOpacity(0.3),
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(radius),
+  ),
+),
 
       // =========================
       // FLOATING BUTTON

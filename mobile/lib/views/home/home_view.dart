@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../config/app_theme.dart';
 import '../../controllers/auth_controller.dart';
 import '../../controllers/coleccion_controller.dart';
@@ -11,15 +12,19 @@ class HomeView extends StatefulWidget {
   State<HomeView> createState() => _HomeViewState();
 }
 
-class _HomeViewState extends State<HomeView> with TickerProviderStateMixin {
+class _HomeViewState extends State<HomeView>
+    with TickerProviderStateMixin {
+  late AnimationController _animationController;
+  late List<Animation<double>> _animations;
+
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ColeccionController>().cargarProgreso();
     });
 
-    // Inicializar animaciones
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 1200),
       vsync: this,
@@ -46,6 +51,9 @@ class _HomeViewState extends State<HomeView> with TickerProviderStateMixin {
       ),
     ];
 
+    _animationController.forward();
+  }
+
   @override
   void dispose() {
     _animationController.dispose();
@@ -70,16 +78,15 @@ class _HomeViewState extends State<HomeView> with TickerProviderStateMixin {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            // Saludo mejorado
             FadeTransition(
               opacity: _animations[0],
               child: _GreetingCard(
                 userName: auth.user?.nombre ?? '',
               ),
             ),
+
             const SizedBox(height: 24),
 
-            // Progreso general
             FadeTransition(
               opacity: _animations[1],
               child: Column(
@@ -87,10 +94,13 @@ class _HomeViewState extends State<HomeView> with TickerProviderStateMixin {
                 children: [
                   Text(
                     'Tu progreso',
-                    style: theme.textTheme.headlineSmall
-                        ?.copyWith(fontWeight: FontWeight.bold),
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
+
                   const SizedBox(height: 14),
+
                   if (coleccion.loading && progreso == null)
                     const Center(
                       child: Padding(
@@ -107,11 +117,14 @@ class _HomeViewState extends State<HomeView> with TickerProviderStateMixin {
                           : '—',
                       color: AppTheme.primaryColor,
                     ),
+
                     const SizedBox(height: 12),
+
                     _StatCard(
                       icon: Icons.percent_rounded,
                       label: 'Porcentaje completado',
-                      value: progreso != null ? '${progreso.porcentaje}%' : '—',
+                      value:
+                          progreso != null ? '${progreso.porcentaje}%' : '—',
                       color: AppTheme.secondaryColor,
                       child: progreso != null
                           ? Padding(
@@ -136,9 +149,9 @@ class _HomeViewState extends State<HomeView> with TickerProviderStateMixin {
                 ],
               ),
             ),
+
             const SizedBox(height: 24),
 
-            // Por país
             if (progreso != null && progreso.porPais.isNotEmpty)
               FadeTransition(
                 opacity: _animations[2],
@@ -147,39 +160,48 @@ class _HomeViewState extends State<HomeView> with TickerProviderStateMixin {
                   children: [
                     Text(
                       'Por país',
-                      style: theme.textTheme.headlineSmall
-                          ?.copyWith(fontWeight: FontWeight.bold),
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
+
                     const SizedBox(height: 12),
+
                     Card(
                       child: Padding(
                         padding: const EdgeInsets.all(16),
                         child: Column(
                           children: [
                             ...progreso.porPais.take(6).map((p) {
-                              final index =
-                                  progreso.porPais.indexOf(p);
+                              final index = progreso.porPais.indexOf(p);
+
                               return Padding(
                                 padding: EdgeInsets.only(
                                   bottom: index < 5 ? 12 : 0,
                                 ),
-                                child: _PaisProgressTile(pais: p),
+                                child: _PaisProgressTile(
+                                  pais: p,
+                                ),
                               );
                             }),
+
                             if (progreso.porPais.length > 6) ...[
                               Padding(
                                 padding: const EdgeInsets.only(top: 12),
                                 child: Divider(
-                                  color: theme.colorScheme.outlineVariant,
+                                  color:
+                                      theme.colorScheme.outlineVariant,
                                 ),
                               ),
+
                               Padding(
                                 padding: const EdgeInsets.only(top: 12),
                                 child: Text(
                                   '+ ${progreso.porPais.length - 6} países más',
-                                  style: theme.textTheme.bodySmall?.copyWith(
-                                    color:
-                                        theme.colorScheme.onSurfaceVariant,
+                                  style:
+                                      theme.textTheme.bodySmall?.copyWith(
+                                    color: theme
+                                        .colorScheme.onSurfaceVariant,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -192,6 +214,7 @@ class _HomeViewState extends State<HomeView> with TickerProviderStateMixin {
                   ],
                 ),
               ),
+
             const SizedBox(height: 16),
           ],
         ),
@@ -200,40 +223,47 @@ class _HomeViewState extends State<HomeView> with TickerProviderStateMixin {
   }
 }
 
-// Tarjeta de saludo mejorada
 class _GreetingCard extends StatelessWidget {
+  final String userName;
+
+  const _GreetingCard({
+    required this.userName,
+  });
+
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ColeccionController>().cargarProgreso();
-    });
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: isDark
               ? [
-                  AppTheme.darkPrimaryColor.withValues(alpha: 0.8),
-                  AppTheme.darkSecondaryColor.withValues(alpha: 0.6),
+                  AppTheme.darkPrimaryColor.withOpacity(0.8),
+                  AppTheme.darkSecondaryColor.withOpacity(0.6),
                 ]
               : [
                   AppTheme.primaryColor,
-                  AppTheme.secondaryColor.withValues(alpha: 0.8),
+                  AppTheme.secondaryColor.withOpacity(0.8),
                 ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
+
         borderRadius: BorderRadius.circular(16),
+
         boxShadow: [
           BoxShadow(
-            color:
-                AppTheme.primaryColor.withValues(alpha: isDark ? 0.2 : 0.3),
+            color: AppTheme.primaryColor.withOpacity(
+              isDark ? 0.2 : 0.3,
+            ),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
         ],
       ),
+
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Row(
@@ -242,12 +272,16 @@ class _GreetingCard extends StatelessWidget {
               width: 56,
               height: 56,
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: isDark ? 0.15 : 0.25),
+                color: Colors.white.withOpacity(
+                  isDark ? 0.15 : 0.25,
+                ),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Center(
                 child: Text(
-                  userName.characters.first.toUpperCase(),
+                  userName.isNotEmpty
+                      ? userName.characters.first.toUpperCase()
+                      : '?',
                   style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -256,7 +290,9 @@ class _GreetingCard extends StatelessWidget {
                 ),
               ),
             ),
+
             const SizedBox(width: 16),
+
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -270,7 +306,9 @@ class _GreetingCard extends StatelessWidget {
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
+
                   const SizedBox(height: 4),
+
                   const Text(
                     'Tu álbum te espera',
                     style: TextStyle(
@@ -281,6 +319,7 @@ class _GreetingCard extends StatelessWidget {
                 ],
               ),
             ),
+
             const Icon(
               Icons.sports_soccer,
               size: 32,
@@ -293,7 +332,6 @@ class _GreetingCard extends StatelessWidget {
   }
 }
 
-// Tarjeta estadística mejorada
 class _StatCard extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -320,10 +358,11 @@ class _StatCard extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: color.withValues(alpha: 0.2),
+            color: color.withOpacity(0.2),
             width: 1,
           ),
         ),
+
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -335,24 +374,35 @@ class _StatCard extends StatelessWidget {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: color.withValues(alpha: isDark ? 0.15 : 0.1),
+                      color: color.withOpacity(
+                        isDark ? 0.15 : 0.1,
+                      ),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Icon(icon, color: color, size: 20),
+                    child: Icon(
+                      icon,
+                      color: color,
+                      size: 20,
+                    ),
                   ),
+
                   const SizedBox(width: 12),
+
                   Expanded(
                     child: Text(
                       label,
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
+                        color:
+                            theme.colorScheme.onSurfaceVariant,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
                 ],
               ),
+
               const SizedBox(height: 12),
+
               Text(
                 value,
                 style: theme.textTheme.headlineSmall?.copyWith(
@@ -360,6 +410,7 @@ class _StatCard extends StatelessWidget {
                   color: color,
                 ),
               ),
+
               if (child != null) child!,
             ],
           ),
@@ -369,24 +420,32 @@ class _StatCard extends StatelessWidget {
   }
 }
 
-// Tile de progreso por país
 class _PaisProgressTile extends StatelessWidget {
   final Map<String, dynamic> pais;
 
-  const _PaisProgressTile({required this.pais});
+  const _PaisProgressTile({
+    required this.pais,
+  });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final obtenidas = pais['laminas_obtenidas'] as int? ?? 0;
-    final total = pais['total_laminas'] as int? ?? 0;
-    final porcentaje = pais['porcentaje'] as double? ?? 0.0;
+
+    final obtenidas =
+        pais['laminas_obtenidas'] as int? ?? 0;
+
+    final total =
+        pais['total_laminas'] as int? ?? 0;
+
+    final porcentaje =
+        pais['porcentaje'] as double? ?? 0.0;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment:
+              MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
               child: Text(
@@ -397,23 +456,29 @@ class _PaisProgressTile extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
             ),
+
             Text(
               '$obtenidas/$total',
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
+                color:
+                    theme.colorScheme.onSurfaceVariant,
                 fontWeight: FontWeight.w600,
               ),
             ),
           ],
         ),
+
         const SizedBox(height: 8),
+
         ClipRRect(
           borderRadius: BorderRadius.circular(6),
           child: LinearProgressIndicator(
             value: porcentaje / 100,
             minHeight: 8,
-            backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
-            valueColor: const AlwaysStoppedAnimation<Color>(
+            backgroundColor:
+                AppTheme.primaryColor.withOpacity(0.1),
+            valueColor:
+                const AlwaysStoppedAnimation<Color>(
               AppTheme.accentColor,
             ),
           ),
