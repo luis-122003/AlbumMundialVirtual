@@ -20,6 +20,25 @@ const query = async (text, params) => {
 const initDatabase = async () => {
   try {
     await pool.query('SELECT 1');
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS historial_escaneos (
+        id SERIAL PRIMARY KEY,
+        usuario_id INT NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+        lamina_id VARCHAR(10) NOT NULL REFERENCES laminas_panini_2026(id),
+        estado VARCHAR(12) NOT NULL CHECK (estado IN ('nueva', 'repetida')),
+        cantidad_repetidas INT DEFAULT 0,
+        contenido_qr TEXT,
+        fecha_escaneo TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_historial_usuario_fecha
+      ON historial_escaneos(usuario_id, fecha_escaneo DESC)
+    `);
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_historial_lamina
+      ON historial_escaneos(lamina_id)
+    `);
     console.log('Conexión a PostgreSQL establecida correctamente.');
   } catch (err) {
     console.error('Error al conectar a la base de datos:', err.message);

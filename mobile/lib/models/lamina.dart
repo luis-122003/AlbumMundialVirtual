@@ -38,6 +38,24 @@ class Lamina {
         posicion: json['posicion'] as String?,
       );
 
+  int get numero {
+    if (id.startsWith(iso3)) {
+      return int.tryParse(id.substring(iso3.length)) ?? 0;
+    }
+    final match = RegExp(r'(\d+)$').firstMatch(id);
+    return int.tryParse(match?.group(1) ?? '') ?? 0;
+  }
+
+  bool get esEscudo => numero == 1 || posicion?.toUpperCase() == 'ESCUDO';
+
+  bool get esFotoEquipo => numero == 13 || posicion?.toUpperCase() == 'EQUIPO';
+
+  String get tipoVisual {
+    if (esEscudo) return 'Escudo';
+    if (esFotoEquipo) return 'Equipo';
+    return posicion ?? 'Jugador';
+  }
+
   Map<String, dynamic> toJson() => {
         'id': id,
         'nombre_sticker': nombreSticker,

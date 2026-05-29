@@ -95,7 +95,9 @@ class ApiService {
 
   static String _networkMessage(Object e) {
     final s = e.toString().toLowerCase();
-    if (s.contains('timeout')) return 'Tiempo de espera agotado. Verifica el servidor.';
+    if (s.contains('timeout')) {
+      return 'Tiempo de espera agotado. Verifica el servidor.';
+    }
     if (s.contains('connection refused') || s.contains('failed host lookup')) {
       return 'No se pudo conectar al servidor. Verifica que el backend esté corriendo.';
     }

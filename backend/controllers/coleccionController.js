@@ -1,4 +1,17 @@
-const { query } = require('../config/database');
+const { query, pool } = require('../config/database');
+
+const formatLamina = (r) => ({
+  id: r.lamina_id || r.id,
+  nombre_sticker: r.nombre_sticker,
+  fecha_nacimiento: r.fecha_nacimiento,
+  estatura_cm: r.estatura_cm,
+  peso_kg: r.peso_kg,
+  equipo_actual: r.equipo_actual,
+  es_especial: r.es_especial,
+  foto_url: r.foto_url,
+  iso3: r.iso3,
+  posicion: r.posicion,
+});
 
 const formatItem = (r) => ({
   id: r.id,
@@ -7,18 +20,18 @@ const formatItem = (r) => ({
   pegada: r.pegada,
   cantidad_repetidas: r.cantidad_repetidas,
   fecha_obtenida: r.fecha_obtenida,
-  lamina: {
-    id: r.lamina_id,
-    nombre_sticker: r.nombre_sticker,
-    fecha_nacimiento: r.fecha_nacimiento,
-    estatura_cm: r.estatura_cm,
-    peso_kg: r.peso_kg,
-    equipo_actual: r.equipo_actual,
-    es_especial: r.es_especial,
-    foto_url: r.foto_url,
-    iso3: r.iso3,
-    posicion: r.posicion,
-  },
+  lamina: formatLamina(r),
+});
+
+const formatHistorial = (r) => ({
+  id: r.historial_id,
+  usuario_id: r.usuario_id,
+  lamina_id: r.lamina_id,
+  estado: r.estado,
+  cantidad_repetidas: r.cantidad_repetidas,
+  contenido_qr: r.contenido_qr,
+  fecha_escaneo: r.fecha_escaneo,
+  lamina: formatLamina(r),
 });
 
 const getColeccion = async (req, res) => {
@@ -42,48 +55,78 @@ const getColeccion = async (req, res) => {
 };
 
 const escanearLamina = async (req, res) => {
+  const client = await pool.connect();
   try {
-    const { equipo_iso3, lamina_numero } = req.body;
-    if (!equipo_iso3 || lamina_numero === undefined) {
-      return res.status(400).json({ error: 'equipo_iso3 y lamina_numero son requeridos' });
+    const equipoRaw = req.body.equipo_iso3 || req.body.equipo_id || req.body.iso3;
+    const numeroRaw = req.body.lamina_numero ?? req.body.numero;
+    const equipoIso3 = String(equipoRaw || '').trim().toUpperCase();
+    const laminaNumero = Number.parseInt(String(numeroRaw), 10);
+
+    if (!/^[A-Z]{3}$/.test(equipoIso3) || !Number.isInteger(laminaNumero) || laminaNumero < 1 || laminaNumero > 20) {
+      return res.status(400).json({ error: 'QR invalido: usa equipo_iso3/equipo_id y lamina_numero entre 1 y 20' });
     }
 
-    const laminaId = `${String(equipo_iso3).toUpperCase()}${lamina_numero}`;
+    const laminaId = `${equipoIso3}${laminaNumero}`;
+    const contenidoQr = req.body.contenido_qr
+      ? String(req.body.contenido_qr)
+      : JSON.stringify({ equipo_iso3: equipoIso3, lamina_numero: laminaNumero });
 
-    const laminaRows = await query(
+    await client.query('BEGIN');
+
+    const laminaRows = await client.query(
       'SELECT * FROM laminas_panini_2026 WHERE id = $1',
       [laminaId]
     );
-    if (laminaRows.length === 0) {
-      return res.status(404).json({ error: `Lámina ${laminaId} no encontrada` });
+    if (laminaRows.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ error: `Lamina ${laminaId} no encontrada` });
     }
-    const lamina = laminaRows[0];
+    const lamina = laminaRows.rows[0];
 
-    const existing = await query(
+    const existing = await client.query(
       'SELECT id, cantidad_repetidas FROM coleccion_usuario WHERE usuario_id = $1 AND lamina_id = $2',
       [req.userId, laminaId]
     );
 
-    let estado, cantidadRepetidas;
-    if (existing.length === 0) {
-      await query(
+    let estado;
+    let cantidadRepetidas;
+    if (existing.rows.length === 0) {
+      await client.query(
         'INSERT INTO coleccion_usuario (usuario_id, lamina_id, pegada, cantidad_repetidas) VALUES ($1, $2, true, 0)',
         [req.userId, laminaId]
       );
       estado = 'nueva';
       cantidadRepetidas = 0;
     } else {
-      cantidadRepetidas = existing[0].cantidad_repetidas + 1;
-      await query(
+      cantidadRepetidas = existing.rows[0].cantidad_repetidas + 1;
+      await client.query(
         'UPDATE coleccion_usuario SET cantidad_repetidas = $1 WHERE usuario_id = $2 AND lamina_id = $3',
         [cantidadRepetidas, req.userId, laminaId]
       );
       estado = 'repetida';
     }
 
-    res.json({ estado, cantidad_repetidas: cantidadRepetidas, lamina });
+    const historial = await client.query(
+      `INSERT INTO historial_escaneos
+       (usuario_id, lamina_id, estado, cantidad_repetidas, contenido_qr)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING fecha_escaneo`,
+      [req.userId, laminaId, estado, cantidadRepetidas, contenidoQr]
+    );
+
+    await client.query('COMMIT');
+
+    res.json({
+      estado,
+      cantidad_repetidas: cantidadRepetidas,
+      fecha_escaneo: historial.rows[0].fecha_escaneo,
+      lamina: formatLamina(lamina),
+    });
   } catch (err) {
+    await client.query('ROLLBACK').catch(() => {});
     res.status(500).json({ error: err.message });
+  } finally {
+    client.release();
   }
 };
 
@@ -125,6 +168,33 @@ const getLaminasFaltantes = async (req, res) => {
   }
 };
 
+const getHistorialEscaneos = async (req, res) => {
+  try {
+    const requestedLimit = Number.parseInt(req.query.limit || '40', 10);
+    const limit = Number.isInteger(requestedLimit)
+      ? Math.min(Math.max(requestedLimit, 1), 100)
+      : 40;
+
+    const rows = await query(
+      `SELECT he.id AS historial_id, he.usuario_id, he.lamina_id,
+              he.estado, he.cantidad_repetidas, he.contenido_qr,
+              he.fecha_escaneo,
+              l.nombre_sticker, l.fecha_nacimiento, l.estatura_cm,
+              l.peso_kg, l.equipo_actual, l.es_especial, l.foto_url,
+              l.iso3, l.posicion
+       FROM historial_escaneos he
+       JOIN laminas_panini_2026 l ON he.lamina_id = l.id
+       WHERE he.usuario_id = $1
+       ORDER BY he.fecha_escaneo DESC
+       LIMIT $2`,
+      [req.userId, limit]
+    );
+    res.json(rows.map(formatHistorial));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 const getProgreso = async (req, res) => {
   try {
     const [{ total }] = await query('SELECT COUNT(*) AS total FROM laminas_panini_2026');
@@ -151,11 +221,11 @@ const getProgreso = async (req, res) => {
     res.json({
       total_laminas: t,
       laminas_obtenidas: o,
-      porcentaje: t > 0 ? parseFloat((o / t * 100).toFixed(1)) : 0,
+      porcentaje: t > 0 ? parseFloat(((o / t) * 100).toFixed(1)) : 0,
       por_pais: porPais.map((r) => ({
         ...r,
         porcentaje: r.total_laminas > 0
-          ? parseFloat((r.laminas_obtenidas / r.total_laminas * 100).toFixed(1))
+          ? parseFloat(((r.laminas_obtenidas / r.total_laminas) * 100).toFixed(1))
           : 0,
       })),
     });
@@ -164,4 +234,11 @@ const getProgreso = async (req, res) => {
   }
 };
 
-module.exports = { getColeccion, escanearLamina, getLaminasRepetidas, getLaminasFaltantes, getProgreso };
+module.exports = {
+  getColeccion,
+  escanearLamina,
+  getLaminasRepetidas,
+  getLaminasFaltantes,
+  getHistorialEscaneos,
+  getProgreso,
+};

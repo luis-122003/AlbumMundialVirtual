@@ -27,6 +27,19 @@ CREATE TABLE IF NOT EXISTS coleccion_usuario (
 );
 
 -- ============================================
+-- TABLA: historial_escaneos
+-- ============================================
+CREATE TABLE IF NOT EXISTS historial_escaneos (
+    id SERIAL PRIMARY KEY,
+    usuario_id INT NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+    lamina_id VARCHAR(10) NOT NULL REFERENCES laminas_panini_2026(id),
+    estado VARCHAR(12) NOT NULL CHECK (estado IN ('nueva', 'repetida')),
+    cantidad_repetidas INT DEFAULT 0,
+    contenido_qr TEXT,
+    fecha_escaneo TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ============================================
 -- TABLA: intercambios
 -- ============================================
 CREATE TABLE IF NOT EXISTS intercambios (
@@ -61,6 +74,8 @@ CREATE TABLE IF NOT EXISTS intercambio_laminas (
 -- ============================================
 CREATE INDEX IF NOT EXISTS idx_coleccion_usuario ON coleccion_usuario(usuario_id);
 CREATE INDEX IF NOT EXISTS idx_coleccion_lamina ON coleccion_usuario(lamina_id);
+CREATE INDEX IF NOT EXISTS idx_historial_usuario_fecha ON historial_escaneos(usuario_id, fecha_escaneo DESC);
+CREATE INDEX IF NOT EXISTS idx_historial_lamina ON historial_escaneos(lamina_id);
 CREATE INDEX IF NOT EXISTS idx_intercambio_emisor ON intercambios(usuario_emisor_id);
 CREATE INDEX IF NOT EXISTS idx_intercambio_receptor ON intercambios(usuario_receptor_id);
 CREATE INDEX IF NOT EXISTS idx_intercambio_estado ON intercambios(estado);

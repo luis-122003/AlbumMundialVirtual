@@ -25,6 +25,7 @@ router.get('/coleccion',           authMiddleware, coleccion.getColeccion);
 router.post('/coleccion/escanear', authMiddleware, coleccion.escanearLamina);
 router.get('/coleccion/repetidas', authMiddleware, coleccion.getLaminasRepetidas);
 router.get('/coleccion/faltantes', authMiddleware, coleccion.getLaminasFaltantes);
+router.get('/coleccion/historial', authMiddleware, coleccion.getHistorialEscaneos);
 router.get('/coleccion/progreso',  authMiddleware, coleccion.getProgreso);
 
 // Intercambios (protegidas)
