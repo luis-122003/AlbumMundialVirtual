@@ -265,6 +265,11 @@ class _CameraScanner extends StatelessWidget {
                 child: const Center(child: CircularProgressIndicator()),
               ),
             Positioned(
+              top: 12,
+              right: 12,
+              child: _ScannerCameraControls(controller: controller),
+            ),
+            Positioned(
               left: 16,
               right: 16,
               bottom: 16,
@@ -286,6 +291,74 @@ class _CameraScanner extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+}
+
+class _ScannerCameraControls extends StatelessWidget {
+  final MobileScannerController controller;
+
+  const _ScannerCameraControls({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<MobileScannerState>(
+      valueListenable: controller,
+      builder: (context, state, _) {
+        final hasMultipleCameras = (state.availableCameras ?? 0) > 1;
+        final torchAvailable = state.torchState != TorchState.unavailable;
+        final torchOn = state.torchState == TorchState.on;
+
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _ScannerRoundButton(
+              tooltip: torchOn ? 'Apagar linterna' : 'Encender linterna',
+              onPressed: torchAvailable
+                  ? () => unawaited(controller.toggleTorch())
+                  : null,
+              icon: torchOn ? Icons.flash_on : Icons.flash_off,
+            ),
+            const SizedBox(width: 8),
+            _ScannerRoundButton(
+              tooltip: 'Cambiar camara',
+              onPressed: hasMultipleCameras
+                  ? () => unawaited(controller.switchCamera())
+                  : null,
+              icon: Icons.cameraswitch_outlined,
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _ScannerRoundButton extends StatelessWidget {
+  final String tooltip;
+  final VoidCallback? onPressed;
+  final IconData icon;
+
+  const _ScannerRoundButton({
+    required this.tooltip,
+    required this.onPressed,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: tooltip,
+      child: IconButton.filledTonal(
+        onPressed: onPressed,
+        style: IconButton.styleFrom(
+          backgroundColor: Colors.black.withValues(alpha: 0.55),
+          disabledBackgroundColor: Colors.black.withValues(alpha: 0.25),
+          foregroundColor: Colors.white,
+          disabledForegroundColor: Colors.white54,
+        ),
+        icon: Icon(icon),
+      ),
     );
   }
 }

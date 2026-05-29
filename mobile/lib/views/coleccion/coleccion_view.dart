@@ -381,6 +381,16 @@ class _EquipoAlbumViewState extends State<EquipoAlbumView> {
     ]);
   }
 
+  void _goToPage(int index, int total) {
+    if (total == 0) return;
+    final target = index.clamp(0, total - 1);
+    _pageController.animateToPage(
+      target,
+      duration: const Duration(milliseconds: 280),
+      curve: Curves.easeOutCubic,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final paises = context.watch<LaminaController>().paises;
@@ -390,7 +400,38 @@ class _EquipoAlbumViewState extends State<EquipoAlbumView> {
     final title = paises.isEmpty ? 'Album' : paises[safeIndex].pais;
 
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
+      appBar: AppBar(
+        title: Text(title),
+        actions: [
+          IconButton(
+            tooltip: 'Primer equipo',
+            onPressed:
+                safeIndex == 0 ? null : () => _goToPage(0, paises.length),
+            icon: const Icon(Icons.first_page),
+          ),
+          IconButton(
+            tooltip: 'Equipo anterior',
+            onPressed: safeIndex == 0
+                ? null
+                : () => _goToPage(safeIndex - 1, paises.length),
+            icon: const Icon(Icons.chevron_left),
+          ),
+          IconButton(
+            tooltip: 'Equipo siguiente',
+            onPressed: safeIndex >= paises.length - 1
+                ? null
+                : () => _goToPage(safeIndex + 1, paises.length),
+            icon: const Icon(Icons.chevron_right),
+          ),
+          IconButton(
+            tooltip: 'Ultimo equipo',
+            onPressed: safeIndex >= paises.length - 1
+                ? null
+                : () => _goToPage(paises.length - 1, paises.length),
+            icon: const Icon(Icons.last_page),
+          ),
+        ],
+      ),
       body: paises.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : PageView.builder(
@@ -404,6 +445,154 @@ class _EquipoAlbumViewState extends State<EquipoAlbumView> {
                 );
               },
             ),
+      bottomNavigationBar: paises.isEmpty
+          ? null
+          : _TeamPageNavigation(
+              currentIndex: safeIndex,
+              total: paises.length,
+              currentLabel:
+                  '${paises[safeIndex].iso3} · ${paises[safeIndex].pais}',
+              onFirst:
+                  safeIndex == 0 ? null : () => _goToPage(0, paises.length),
+              onPrevious: safeIndex == 0
+                  ? null
+                  : () => _goToPage(safeIndex - 1, paises.length),
+              onNext: safeIndex >= paises.length - 1
+                  ? null
+                  : () => _goToPage(safeIndex + 1, paises.length),
+              onLast: safeIndex >= paises.length - 1
+                  ? null
+                  : () => _goToPage(paises.length - 1, paises.length),
+            ),
+    );
+  }
+}
+
+class _TeamPageNavigation extends StatelessWidget {
+  final int currentIndex;
+  final int total;
+  final String currentLabel;
+  final VoidCallback? onFirst;
+  final VoidCallback? onPrevious;
+  final VoidCallback? onNext;
+  final VoidCallback? onLast;
+
+  const _TeamPageNavigation({
+    required this.currentIndex,
+    required this.total,
+    required this.currentLabel,
+    required this.onFirst,
+    required this.onPrevious,
+    required this.onNext,
+    required this.onLast,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return SafeArea(
+      top: false,
+      child: Material(
+        color: cs.surface,
+        elevation: 3,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(8, 8, 8, 10),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  IconButton(
+                    tooltip: 'Primer equipo',
+                    onPressed: onFirst,
+                    icon: const Icon(Icons.first_page),
+                  ),
+                  IconButton(
+                    tooltip: 'Equipo anterior',
+                    onPressed: onPrevious,
+                    icon: const Icon(Icons.arrow_back_ios_new),
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          currentLabel,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontWeight: FontWeight.w700),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          '${currentIndex + 1} de $total',
+                          style: TextStyle(
+                            color: cs.onSurfaceVariant,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    tooltip: 'Equipo siguiente',
+                    onPressed: onNext,
+                    icon: const Icon(Icons.arrow_forward_ios),
+                  ),
+                  IconButton(
+                    tooltip: 'Ultimo equipo',
+                    onPressed: onLast,
+                    icon: const Icon(Icons.last_page),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              _PageDots(currentIndex: currentIndex, total: total),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PageDots extends StatelessWidget {
+  final int currentIndex;
+  final int total;
+
+  const _PageDots({required this.currentIndex, required this.total});
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    const visibleDots = 7;
+    final start = total <= visibleDots
+        ? 0
+        : math.min(
+            math.max(currentIndex - visibleDots ~/ 2, 0),
+            total - visibleDots,
+          );
+    final end = math.min(total, start + visibleDots);
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        if (start > 0)
+          Icon(Icons.more_horiz, size: 14, color: cs.onSurfaceVariant),
+        for (var i = start; i < end; i++)
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            width: i == currentIndex ? 18 : 7,
+            height: 7,
+            margin: const EdgeInsets.symmetric(horizontal: 3),
+            decoration: BoxDecoration(
+              color: i == currentIndex ? cs.primary : cs.outlineVariant,
+              borderRadius: BorderRadius.circular(999),
+            ),
+          ),
+        if (end < total)
+          Icon(Icons.more_horiz, size: 14, color: cs.onSurfaceVariant),
+      ],
     );
   }
 }
