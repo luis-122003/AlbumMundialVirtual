@@ -1,17 +1,9 @@
-@import "tailwindcss" source(none);
-@source "../src";
 @import "tw-animate-css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@custom-variant dark (&:is(.dark *));
-
-/*
- * Enhanced Design System - Album Virtual
- * 
- * Modern color scheme inspired by football/soccer albums with vibrant accents
- * Optimized for better contrast and visual hierarchy
- */
-
-@theme inline {
+:root {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -53,7 +45,6 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 }
-
 :root {
   --radius: 0.75rem;
   /* Light mode - Clean and bright */
@@ -140,7 +131,9 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
   }
 
   /* Smooth animations */
@@ -167,7 +160,8 @@
   }
 
   @keyframes pulse-soft {
-    0%, 100% {
+    0%,
+    100% {
       opacity: 1;
     }
     50% {

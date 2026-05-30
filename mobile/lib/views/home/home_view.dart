@@ -135,7 +135,7 @@ class _HomeViewState extends State<HomeView>
                                   value: progreso.porcentaje / 100,
                                   minHeight: 10,
                                   backgroundColor:
-                                      AppTheme.primaryColor.withOpacity(0.1),
+                                      AppTheme.primaryColor.withValues(alpha: 0.1),
                                   valueColor:
                                       const AlwaysStoppedAnimation<Color>(
                                     AppTheme.primaryColor,
@@ -240,12 +240,12 @@ class _GreetingCard extends StatelessWidget {
         gradient: LinearGradient(
           colors: isDark
               ? [
-                  AppTheme.darkPrimaryColor.withOpacity(0.8),
-                  AppTheme.darkSecondaryColor.withOpacity(0.6),
+                  AppTheme.darkPrimaryColor.withValues(alpha: 0.8),
+                  AppTheme.darkSecondaryColor.withValues(alpha: 0.6),
                 ]
               : [
                   AppTheme.primaryColor,
-                  AppTheme.secondaryColor.withOpacity(0.8),
+                  AppTheme.secondaryColor.withValues(alpha: 0.8),
                 ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -255,8 +255,8 @@ class _GreetingCard extends StatelessWidget {
 
         boxShadow: [
           BoxShadow(
-            color: AppTheme.primaryColor.withOpacity(
-              isDark ? 0.2 : 0.3,
+            color: AppTheme.primaryColor.withValues(
+              alpha: isDark ? 0.2 : 0.3,
             ),
             blurRadius: 12,
             offset: const Offset(0, 4),
@@ -272,8 +272,8 @@ class _GreetingCard extends StatelessWidget {
               width: 56,
               height: 56,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(
-                  isDark ? 0.15 : 0.25,
+                color: Colors.white.withValues(
+                  alpha: isDark ? 0.15 : 0.25,
                 ),
                 borderRadius: BorderRadius.circular(16),
               ),
@@ -358,7 +358,7 @@ class _StatCard extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: color.withOpacity(0.2),
+            color: color.withValues(alpha: 0.2),
             width: 1,
           ),
         ),
@@ -374,8 +374,8 @@ class _StatCard extends StatelessWidget {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: color.withOpacity(
-                        isDark ? 0.15 : 0.1,
+                      color: color.withValues(
+                        alpha: isDark ? 0.15 : 0.1,
                       ),
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -476,7 +476,7 @@ class _PaisProgressTile extends StatelessWidget {
             value: porcentaje / 100,
             minHeight: 8,
             backgroundColor:
-                AppTheme.primaryColor.withOpacity(0.1),
+                AppTheme.primaryColor.withValues(alpha: 0.1),
             valueColor:
                 const AlwaysStoppedAnimation<Color>(
               AppTheme.accentColor,

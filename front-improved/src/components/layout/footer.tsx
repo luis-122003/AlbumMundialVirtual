@@ -1,4 +1,4 @@
-import { Github, Globe, Mail } from 'lucide-react';
+import { Github, Globe, Mail } from "lucide-react";
 
 export function Footer() {
   return (
@@ -9,7 +9,8 @@ export function Footer() {
           <div>
             <h3 className="font-semibold text-foreground">Album Virtual</h3>
             <p className="mt-2 text-sm text-muted-foreground">
-              La mejor plataforma para gestionar tu colección de láminas del mundial de futbol.
+              La mejor plataforma para gestionar tu colección de láminas del
+              mundial de futbol.
             </p>
           </div>
 
@@ -18,17 +19,26 @@ export function Footer() {
             <h3 className="font-semibold text-foreground">Enlaces rápidos</h3>
             <ul className="mt-2 space-y-2 text-sm">
               <li>
-                <a href="#" className="text-muted-foreground hover:text-primary smooth-transition">
+                <a
+                  href="#"
+                  className="text-muted-foreground hover:text-primary smooth-transition"
+                >
                   Inicio
                 </a>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-primary smooth-transition">
+                <a
+                  href="#"
+                  className="text-muted-foreground hover:text-primary smooth-transition"
+                >
                   Ayuda
                 </a>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-primary smooth-transition">
+                <a
+                  href="#"
+                  className="text-muted-foreground hover:text-primary smooth-transition"
+                >
                   Contacto
                 </a>
               </li>
@@ -66,7 +76,8 @@ export function Footer() {
 
         <div className="mt-8 border-t border-border/40 pt-8">
           <p className="text-center text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} Album Virtual. Todos los derechos reservados.
+            &copy; {new Date().getFullYear()} Album Virtual. Todos los derechos
+            reservados.
           </p>
         </div>
       </div>

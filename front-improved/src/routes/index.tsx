@@ -35,7 +35,9 @@ function Index() {
               </h1>
 
               <p className="text-lg text-muted-foreground mb-8 max-w-md">
-                Gestiona, comparte e intercambia láminas con otros coleccionistas. Una experiencia moderna y fluida para tu pasión por el futbol.
+                Gestiona, comparte e intercambia láminas con otros
+                coleccionistas. Una experiencia moderna y fluida para tu pasión
+                por el futbol.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4">
@@ -50,7 +52,10 @@ function Index() {
             </div>
 
             {/* Right Illustration */}
-            <div className="relative animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
+            <div
+              className="relative animate-fade-in-up"
+              style={{ animationDelay: "0.2s" }}
+            >
               <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl blur-3xl opacity-60"></div>
               <div className="relative bg-gradient-to-br from-card to-card/50 rounded-2xl p-8 border border-border/50 shadow-xl">
                 <div className="grid grid-cols-2 gap-4">
@@ -60,8 +65,12 @@ function Index() {
                       className="aspect-square rounded-lg bg-gradient-to-br from-primary/20 to-accent/20 border border-border flex items-center justify-center"
                     >
                       <div className="text-center">
-                        <div className="text-2xl font-bold text-primary">#{i}</div>
-                        <div className="text-xs text-muted-foreground mt-1">Lámina</div>
+                        <div className="text-2xl font-bold text-primary">
+                          #{i}
+                        </div>
+                        <div className="text-xs text-muted-foreground mt-1">
+                          Lámina
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -149,32 +158,38 @@ const features = [
   {
     icon: Trophy,
     title: "Gestiona tu colección",
-    description: "Organiza y visualiza todas tus láminas en un solo lugar con búsqueda avanzada.",
+    description:
+      "Organiza y visualiza todas tus láminas en un solo lugar con búsqueda avanzada.",
   },
   {
     icon: Users,
     title: "Intercambia con otros",
-    description: "Conecta con otros coleccionistas y realiza intercambios de láminas fácilmente.",
+    description:
+      "Conecta con otros coleccionistas y realiza intercambios de láminas fácilmente.",
   },
   {
     icon: Zap,
     title: "Interfaz moderna",
-    description: "Diseño fluido y responsivo que funciona perfectamente en todos los dispositivos.",
+    description:
+      "Diseño fluido y responsivo que funciona perfectamente en todos los dispositivos.",
   },
   {
     icon: Target,
     title: "Estadísticas detalladas",
-    description: "Visualiza el progreso de tu colección y las estadísticas de tu participación.",
+    description:
+      "Visualiza el progreso de tu colección y las estadísticas de tu participación.",
   },
   {
     icon: CheckCircle,
     title: "Verificación segura",
-    description: "Sistema seguro de autenticación para proteger tu cuenta y datos.",
+    description:
+      "Sistema seguro de autenticación para proteger tu cuenta y datos.",
   },
   {
     icon: Sparkles,
     title: "Notificaciones en tiempo real",
-    description: "Mantente actualizado con notificaciones sobre intercambios y nuevas láminas.",
+    description:
+      "Mantente actualizado con notificaciones sobre intercambios y nuevas láminas.",
   },
 ];
 

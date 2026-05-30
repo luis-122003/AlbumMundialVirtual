@@ -1,5 +1,6 @@
 // API placeholder - Connect to your backend
-export const API_BASE_URL = process.env.VITE_API_URL || 'http://localhost:3000/api';
+export const API_BASE_URL =
+  process.env.VITE_API_URL || "http://localhost:3000/api";
 
 export type Usuario = {
   id: number;
@@ -20,7 +21,7 @@ export type Lamina = {
   numero: number;
   posicion: string;
   imagen_url: string;
-  rarity: 'common' | 'rare' | 'epic' | 'legendary';
+  rarity: "common" | "rare" | "epic" | "legendary";
 };
 
 export type ColeccionItem = {
@@ -28,14 +29,17 @@ export type ColeccionItem = {
   usuario_id: number;
   lamina_id: string;
   cantidad: number;
-  condition: 'perfect' | 'good' | 'fair' | 'poor';
+  condition: "perfect" | "good" | "fair" | "poor";
   created_at: string;
 };
 
 export class ApiError extends Error {
-  constructor(public status: number, message: string) {
+  constructor(
+    public status: number,
+    message: string,
+  ) {
     super(message);
-    this.name = 'ApiError';
+    this.name = "ApiError";
   }
 }
 
@@ -44,24 +48,26 @@ export const api = {
     const response = await fetch(`${API_BASE_URL}${path}`, {
       headers: this.getHeaders(),
     });
-    if (!response.ok) throw new ApiError(response.status, `Failed to fetch ${path}`);
+    if (!response.ok)
+      throw new ApiError(response.status, `Failed to fetch ${path}`);
     return response.json();
   },
 
   async post<T>(path: string, data: unknown): Promise<T> {
     const response = await fetch(`${API_BASE_URL}${path}`, {
-      method: 'POST',
+      method: "POST",
       headers: this.getHeaders(),
       body: JSON.stringify(data),
     });
-    if (!response.ok) throw new ApiError(response.status, `Failed to post to ${path}`);
+    if (!response.ok)
+      throw new ApiError(response.status, `Failed to post to ${path}`);
     return response.json();
   },
 
   getHeaders() {
     const token = authStorage.getToken();
     return {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       ...(token && { Authorization: `Bearer ${token}` }),
     };
   },
@@ -69,12 +75,12 @@ export const api = {
 
 export const authStorage = {
   setToken(token: string) {
-    localStorage.setItem('auth_token', token);
+    localStorage.setItem("auth_token", token);
   },
   getToken(): string | null {
-    return localStorage.getItem('auth_token');
+    return localStorage.getItem("auth_token");
   },
   removeToken() {
-    localStorage.removeItem('auth_token');
+    localStorage.removeItem("auth_token");
   },
 };

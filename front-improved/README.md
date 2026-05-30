@@ -5,6 +5,7 @@ Una versión mejorada de la interfaz web del proyecto Album Virtual con diseño 
 ## 🎨 Mejoras de Diseño Implementadas
 
 ### 1. **Sistema de Colores Vibrante**
+
 - Paleta de colores inspirada en el fútbol
 - Colores primarios vibrantes (azul fútbol)
 - Colores secundarios dinámicos (naranja energético)
@@ -12,12 +13,14 @@ Una versión mejorada de la interfaz web del proyecto Album Virtual con diseño 
 - Soporte completo para dark mode
 
 ### 2. **Componentes de Layout Mejorados**
+
 - **Header Moderno**: Navegación responsive con logo, menú y theme toggle
 - **Footer Elegante**: Con enlaces rápidos y redes sociales
 - **Theme Toggle**: Cambio de tema claro/oscuro sin reload
 - **Animaciones Suaves**: Transiciones elegantes en toda la aplicación
 
 ### 3. **Página Principal Rediseñada**
+
 - Hero section con llamada a la acción clara
 - Sección de características con iconos
 - Estadísticas destacadas
@@ -25,12 +28,14 @@ Una versión mejorada de la interfaz web del proyecto Album Virtual con diseño 
 - Todas las secciones con animaciones fade-in
 
 ### 4. **Diseño Responsivo**
+
 - Mobile-first approach
 - Menú hamburguesa para dispositivos móviles
 - Breakpoints optimizados (sm, md, lg)
 - Imágenes y componentes adaptativos
 
 ### 5. **Componentes UI Mejorados**
+
 - Componentes reutilizables
 - Clases CSS utilities personalizadas
 - Efectos glass-morphism
@@ -38,6 +43,7 @@ Una versión mejorada de la interfaz web del proyecto Album Virtual con diseño 
 - Sombras mejoradas
 
 ### 6. **Sistema de Animaciones**
+
 - `fadeInUp`: Animaciones de entrada desde abajo
 - `slideInRight`: Deslizamiento desde la izquierda
 - `pulsesoft`: Pulso suave para elementos interactivos
@@ -86,14 +92,14 @@ front-improved/
 
 ## 🎯 Diferencias con la Versión Original
 
-| Aspecto | Original | Mejorado |
-|--------|----------|---------|
-| Colores | Neutros | Vibrantes |
-| Animaciones | Básicas | Complejas y suaves |
-| Layout | Simple | Moderno con header/footer |
-| Responsive | Basado en Tailwind | Optimizado mobile-first |
-| Dark Mode | Soportado | Implementado con toggle |
-| Componentes | Shadcn básicos | Personalizados y mejorados |
+| Aspecto     | Original           | Mejorado                   |
+| ----------- | ------------------ | -------------------------- |
+| Colores     | Neutros            | Vibrantes                  |
+| Animaciones | Básicas            | Complejas y suaves         |
+| Layout      | Simple             | Moderno con header/footer  |
+| Responsive  | Basado en Tailwind | Optimizado mobile-first    |
+| Dark Mode   | Soportado          | Implementado con toggle    |
+| Componentes | Shadcn básicos     | Personalizados y mejorados |
 
 ## 🛠️ Instalación y Desarrollo
 
@@ -119,9 +125,9 @@ Edita `src/styles.css` para personalizar los colores:
 
 ```css
 :root {
-  --primary: oklch(0.35 0.15 250);      /* Azul fútbol */
-  --secondary: oklch(0.65 0.18 45);     /* Naranja energético */
-  --accent: oklch(0.6 0.2 135);         /* Verde vibrante */
+  --primary: oklch(0.35 0.15 250); /* Azul fútbol */
+  --secondary: oklch(0.65 0.18 45); /* Naranja energético */
+  --accent: oklch(0.6 0.2 135); /* Verde vibrante */
 }
 ```
 

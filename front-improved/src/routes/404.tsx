@@ -15,14 +15,15 @@ function NotFound() {
         <div className="mb-6 inline-flex rounded-lg bg-destructive/10 p-4 text-destructive">
           <AlertCircle className="h-8 w-8" />
         </div>
-        
+
         <h1 className="text-6xl font-bold text-foreground mb-2">404</h1>
         <h2 className="text-2xl font-semibold text-foreground mb-4">
           Página no encontrada
         </h2>
-        
+
         <p className="text-muted-foreground mb-8">
-          La página que buscas no existe o ha sido movida. Regresa al inicio para continuar.
+          La página que buscas no existe o ha sido movida. Regresa al inicio
+          para continuar.
         </p>
 
         <div className="flex flex-col gap-3">
@@ -33,7 +34,7 @@ function NotFound() {
             <ArrowLeft className="h-4 w-4" />
             Volver atrás
           </button>
-          
+
           <button
             onClick={() => router.navigate({ to: "/" })}
             className="inline-flex items-center justify-center rounded-lg gradient-primary px-6 py-3 text-sm font-medium text-primary-foreground transition-all hover:shadow-glow smooth-transition"

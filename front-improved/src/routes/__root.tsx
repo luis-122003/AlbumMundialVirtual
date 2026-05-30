@@ -15,14 +15,25 @@ function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground animate-fade-in-up">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
+        <h1 className="text-7xl font-bold text-foreground animate-fade-in-up">
+          404
+        </h1>
+        <h2
+          className="mt-4 text-xl font-semibold text-foreground animate-fade-in-up"
+          style={{ animationDelay: "0.1s" }}
+        >
           Página no encontrada
         </h2>
-        <p className="mt-2 text-sm text-muted-foreground animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
+        <p
+          className="mt-2 text-sm text-muted-foreground animate-fade-in-up"
+          style={{ animationDelay: "0.2s" }}
+        >
           La página que buscas no existe o ha sido movida.
         </p>
-        <div className="mt-6 animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
+        <div
+          className="mt-6 animate-fade-in-up"
+          style={{ animationDelay: "0.3s" }}
+        >
           <Link
             to="/"
             className="inline-flex items-center justify-center rounded-lg gradient-primary px-6 py-3 text-sm font-medium text-primary-foreground transition-all hover:shadow-glow smooth-transition"
@@ -46,7 +57,8 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
           Algo salió mal
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Hubo un error inesperado. Intenta actualizar la página o volver al inicio.
+          Hubo un error inesperado. Intenta actualizar la página o volver al
+          inicio.
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
@@ -70,31 +82,39 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
-export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Album Virtual - Copa Mundial 2026" },
-      { name: "description", content: "Gestiona tu colección de láminas del mundial de futbol" },
-      { name: "author", content: "Album Virtual" },
-      { property: "og:title", content: "Album Virtual" },
-      { property: "og:description", content: "Gestiona tu colección de láminas del mundial" },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-    ],
-    links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
-    ],
-  }),
-  shellComponent: RootShell,
-  component: RootComponent,
-  notFoundComponent: NotFoundComponent,
-  errorComponent: ErrorComponent,
-});
+export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
+  {
+    head: () => ({
+      meta: [
+        { charSet: "utf-8" },
+        { name: "viewport", content: "width=device-width, initial-scale=1" },
+        { title: "Album Virtual - Copa Mundial 2026" },
+        {
+          name: "description",
+          content: "Gestiona tu colección de láminas del mundial de futbol",
+        },
+        { name: "author", content: "Album Virtual" },
+        { property: "og:title", content: "Album Virtual" },
+        {
+          property: "og:description",
+          content: "Gestiona tu colección de láminas del mundial",
+        },
+        { property: "og:type", content: "website" },
+        { name: "twitter:card", content: "summary" },
+      ],
+      links: [
+        {
+          rel: "stylesheet",
+          href: appCss,
+        },
+      ],
+    }),
+    shellComponent: RootShell,
+    component: RootComponent,
+    notFoundComponent: NotFoundComponent,
+    errorComponent: ErrorComponent,
+  },
+);
 
 function RootShell({ children }: { children: React.ReactNode }) {
   return (

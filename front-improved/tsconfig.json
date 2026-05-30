@@ -12,11 +12,7 @@
     ========================= */
     "target": "ES2022",
     "module": "ESNext",
-    "lib": [
-      "ES2022",
-      "DOM",
-      "DOM.Iterable"
-    ],
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
 
     /* =========================
        React
@@ -46,14 +42,10 @@
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
-
-    /* =========================
-       Aliases
-    ========================= */
-    "baseUrl": ".",
+    
 
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./*"]
     }
   }
 }
