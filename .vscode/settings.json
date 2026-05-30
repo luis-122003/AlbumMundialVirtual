@@ -1,0 +1,11 @@
+{
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "cSpell.words": [
+        "Adoptium",
+        "allprojects",
+        "dists",
+        "hotspot",
+        "jvmargs",
+        "Metaspace"
+    ]
+}
