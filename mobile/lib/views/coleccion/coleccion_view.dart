@@ -9,6 +9,7 @@ import '../../controllers/lamina_controller.dart';
 import '../../models/coleccion_item.dart';
 import '../../models/lamina.dart';
 import '../../models/pais.dart';
+import '../../utils/animation_utils.dart';
 
 class ColeccionView extends StatefulWidget {
   const ColeccionView({super.key});
@@ -108,7 +109,7 @@ class _AlbumOverview extends StatelessWidget {
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              _GlobalProgressHeader(progreso: progreso),
+              ScaleInAnimation(child: _GlobalProgressHeader(progreso: progreso)),
               const SizedBox(height: 16),
               if (coleccion.loading && progreso == null)
                 const Center(child: CircularProgressIndicator())
@@ -131,10 +132,12 @@ class _AlbumOverview extends StatelessWidget {
                       laminasCtrl.laminas,
                       progreso,
                     );
-                    return _PaisAlbumCard(
-                      pais: pais,
-                      obtenidas: stats.obtenidas,
-                      total: stats.total,
+                    return ScaleInAnimation(
+                      beginScale: 0.9,
+                      child: _PaisAlbumCard(
+                        pais: pais,
+                        obtenidas: stats.obtenidas,
+                        total: stats.total,
                       porcentaje: stats.porcentaje,
                       onTap: () => Navigator.of(context).push(
                         PageRouteBuilder<void>(
@@ -226,14 +229,10 @@ class _GlobalProgressHeader extends StatelessWidget {
                   style: TextStyle(color: cs.onPrimaryContainer),
                 ),
                 const SizedBox(height: 10),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: LinearProgressIndicator(
-                    value: _unit(percent),
-                    minHeight: 8,
-                    backgroundColor: cs.surface.withValues(alpha: 0.42),
-                    color: cs.primary,
-                  ),
+                ProgressBarAnimation(
+                  value: _unit(percent),
+                  backgroundColor: cs.surface.withValues(alpha: 0.42),
+                  valueColor: cs.primary,
                 ),
               ],
             ),
@@ -321,14 +320,11 @@ class _PaisAlbumCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 9),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(4),
-                      child: LinearProgressIndicator(
-                        value: _unit(porcentaje / 100),
-                        minHeight: 7,
-                        backgroundColor: cs.surfaceContainerHighest,
-                        color: complete ? Colors.amber.shade700 : cs.primary,
-                      ),
+                    ProgressBarAnimation(
+                      value: _unit(porcentaje / 100),
+                      minHeight: 7,
+                      backgroundColor: cs.surfaceContainerHighest,
+                      valueColor: complete ? Colors.amber.shade700 : cs.primary,
                     ),
                   ],
                 ),
