@@ -27,11 +27,18 @@ router.get('/coleccion/repetidas', authMiddleware, coleccion.getLaminasRepetidas
 router.get('/coleccion/faltantes', authMiddleware, coleccion.getLaminasFaltantes);
 router.get('/coleccion/progreso',  authMiddleware, coleccion.getProgreso);
 
+// Usuarios (protegidas)
+router.get('/usuarios/buscar', authMiddleware, intercambios.buscarUsuarios);
+
 // Intercambios (protegidas)
-router.get('/intercambios',                   authMiddleware, intercambios.getIntercambios);
-router.post('/intercambios',                  authMiddleware, intercambios.createIntercambio);
-router.put('/intercambios/:id/aceptar',       authMiddleware, intercambios.aceptarIntercambio);
-router.put('/intercambios/:id/rechazar',      authMiddleware, intercambios.rechazarIntercambio);
-router.put('/intercambios/:id/completar',     authMiddleware, intercambios.completarIntercambio);
+router.get('/intercambios/ofertas',               authMiddleware, intercambios.getOfertas);
+router.get('/intercambios/estadisticas',          authMiddleware, intercambios.getEstadisticas);
+router.get('/intercambios/comparar/:userId',      authMiddleware, intercambios.compararColecciones);
+router.get('/intercambios',                       authMiddleware, intercambios.getIntercambios);
+router.post('/intercambios',                      authMiddleware, intercambios.createIntercambio);
+router.put('/intercambios/:id/aceptar',           authMiddleware, intercambios.aceptarIntercambio);
+router.put('/intercambios/:id/rechazar',          authMiddleware, intercambios.rechazarIntercambio);
+router.put('/intercambios/:id/completar',         authMiddleware, intercambios.completarIntercambio);
+router.put('/intercambios/:id/coordinar',         authMiddleware, intercambios.coordinarEncuentro);
 
 module.exports = router;
