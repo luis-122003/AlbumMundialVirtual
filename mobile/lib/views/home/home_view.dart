@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../config/app_theme.dart';
 import '../../controllers/auth_controller.dart';
 import '../../controllers/coleccion_controller.dart';
+import '../../utils/animation_utils.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -109,41 +110,38 @@ class _HomeViewState extends State<HomeView>
                       ),
                     )
                   else ...[
-                    _StatCard(
-                      icon: Icons.collections_bookmark_outlined,
-                      label: 'Láminas obtenidas',
-                      value: progreso != null
-                          ? '${progreso.laminasObtenidas} / ${progreso.totalLaminas}'
-                          : '—',
-                      color: AppTheme.primaryColor,
+                    ScaleInAnimation(
+                      child: _StatCard(
+                        icon: Icons.collections_bookmark_outlined,
+                        label: 'Láminas obtenidas',
+                        value: progreso != null
+                            ? '${progreso.laminasObtenidas} / ${progreso.totalLaminas}'
+                            : '—',
+                        color: AppTheme.primaryColor,
+                      ),
                     ),
 
                     const SizedBox(height: 12),
 
-                    _StatCard(
-                      icon: Icons.percent_rounded,
-                      label: 'Porcentaje completado',
-                      value:
-                          progreso != null ? '${progreso.porcentaje}%' : '—',
-                      color: AppTheme.secondaryColor,
-                      child: progreso != null
-                          ? Padding(
-                              padding: const EdgeInsets.only(top: 12),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(6),
-                                child: LinearProgressIndicator(
+                    ScaleInAnimation(
+                      child: _StatCard(
+                        icon: Icons.percent_rounded,
+                        label: 'Porcentaje completado',
+                        value:
+                            progreso != null ? '${progreso.porcentaje}%' : '—',
+                        color: AppTheme.secondaryColor,
+                        child: progreso != null
+                            ? Padding(
+                                padding: const EdgeInsets.only(top: 12),
+                                child: ProgressBarAnimation(
                                   value: progreso.porcentaje / 100,
-                                  minHeight: 10,
-                                  backgroundColor:
-                                      AppTheme.primaryColor.withValues(alpha: 0.1),
-                                  valueColor:
-                                      const AlwaysStoppedAnimation<Color>(
-                                    AppTheme.primaryColor,
-                                  ),
+                                  backgroundColor: AppTheme.primaryColor
+                                      .withValues(alpha: 0.1),
+                                  valueColor: AppTheme.primaryColor,
                                 ),
-                              ),
-                            )
-                          : null,
+                              )
+                            : null,
+                      ),
                     ),
                   ],
                 ],
@@ -167,47 +165,49 @@ class _HomeViewState extends State<HomeView>
 
                     const SizedBox(height: 12),
 
-                    Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          children: [
-                            ...progreso.porPais.take(6).map((p) {
-                              final index = progreso.porPais.indexOf(p);
+                    ScaleInAnimation(
+                      child: Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: StaggeredListAnimation(
+                            children: [
+                              ...progreso.porPais.take(6).map((p) {
+                                final index = progreso.porPais.indexOf(p);
 
-                              return Padding(
-                                padding: EdgeInsets.only(
-                                  bottom: index < 5 ? 12 : 0,
-                                ),
-                                child: _PaisProgressTile(
-                                  pais: p,
-                                ),
-                              );
-                            }),
+                                return Padding(
+                                  padding: EdgeInsets.only(
+                                    bottom: index < 5 ? 12 : 0,
+                                  ),
+                                  child: _PaisProgressTile(
+                                    pais: p,
+                                  ),
+                                );
+                              }),
 
-                            if (progreso.porPais.length > 6) ...[
-                              Padding(
-                                padding: const EdgeInsets.only(top: 12),
-                                child: Divider(
-                                  color:
-                                      theme.colorScheme.outlineVariant,
-                                ),
-                              ),
-
-                              Padding(
-                                padding: const EdgeInsets.only(top: 12),
-                                child: Text(
-                                  '+ ${progreso.porPais.length - 6} países más',
-                                  style:
-                                      theme.textTheme.bodySmall?.copyWith(
-                                    color: theme
-                                        .colorScheme.onSurfaceVariant,
-                                    fontWeight: FontWeight.w600,
+                              if (progreso.porPais.length > 6) ...[
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 12),
+                                  child: Divider(
+                                    color:
+                                        theme.colorScheme.outlineVariant,
                                   ),
                                 ),
-                              ),
+
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 12),
+                                  child: Text(
+                                    '+ ${progreso.porPais.length - 6} países más',
+                                    style:
+                                        theme.textTheme.bodySmall?.copyWith(
+                                      color: theme
+                                          .colorScheme.onSurfaceVariant,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ],
-                          ],
+                          ),
                         ),
                       ),
                     ),
@@ -470,18 +470,10 @@ class _PaisProgressTile extends StatelessWidget {
 
         const SizedBox(height: 8),
 
-        ClipRRect(
-          borderRadius: BorderRadius.circular(6),
-          child: LinearProgressIndicator(
-            value: porcentaje / 100,
-            minHeight: 8,
-            backgroundColor:
-                AppTheme.primaryColor.withValues(alpha: 0.1),
-            valueColor:
-                const AlwaysStoppedAnimation<Color>(
-              AppTheme.accentColor,
-            ),
-          ),
+        ProgressBarAnimation(
+          value: porcentaje / 100,
+          backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.1),
+          valueColor: AppTheme.accentColor,
         ),
       ],
     );
