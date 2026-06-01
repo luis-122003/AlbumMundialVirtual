@@ -371,13 +371,7 @@ class _EquipoAlbumViewState extends State<EquipoAlbumView> {
     _pageController = PageController(initialPage: _pageIndex);
   }
 
-  @override
-  void dispose() {
-    if (_pageController != null) {
-      _pageController.dispose();
-    }
-    super.dispose();
-  }
+
 
   Future<void> _refresh() async {
     await Future.wait([
