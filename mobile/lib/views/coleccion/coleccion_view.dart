@@ -407,6 +407,10 @@ class _EquipoAlbumViewState extends State<EquipoAlbumView> {
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ),
       body: paises.isEmpty
           ? const Center(child: CircularProgressIndicator())
