@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 
 import '../../controllers/coleccion_controller.dart';
 import '../../models/scan_history_item.dart';
+import '../../utils/animation_utils.dart';
 
 class ScannerView extends StatefulWidget {
   const ScannerView({super.key});
