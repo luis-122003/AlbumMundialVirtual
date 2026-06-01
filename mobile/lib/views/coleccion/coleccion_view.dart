@@ -424,32 +424,29 @@ class _EquipoAlbumViewState extends State<EquipoAlbumView> {
       appBar: AppBar(
         title: Text(title),
         actions: [
-          IconButton(
+          _NavButton(
             tooltip: 'Primer equipo',
-            onPressed:
-                safeIndex == 0 ? null : () => _goToPage(0, paises.length),
-            icon: const Icon(Icons.first_page),
+            enabled: safeIndex != 0,
+            onPressed: safeIndex == 0 ? null : () => _goToPage(0, paises.length),
+            icon: Icons.first_page,
           ),
-          IconButton(
+          _NavButton(
             tooltip: 'Equipo anterior',
-            onPressed: safeIndex == 0
-                ? null
-                : () => _goToPage(safeIndex - 1, paises.length),
-            icon: const Icon(Icons.chevron_left),
+            enabled: safeIndex != 0,
+            onPressed: safeIndex == 0 ? null : () => _goToPage(safeIndex - 1, paises.length),
+            icon: Icons.chevron_left,
           ),
-          IconButton(
+          _NavButton(
             tooltip: 'Equipo siguiente',
-            onPressed: safeIndex >= paises.length - 1
-                ? null
-                : () => _goToPage(safeIndex + 1, paises.length),
-            icon: const Icon(Icons.chevron_right),
+            enabled: safeIndex < paises.length - 1,
+            onPressed: safeIndex >= paises.length - 1 ? null : () => _goToPage(safeIndex + 1, paises.length),
+            icon: Icons.chevron_right,
           ),
-          IconButton(
+          _NavButton(
             tooltip: 'Ultimo equipo',
-            onPressed: safeIndex >= paises.length - 1
-                ? null
-                : () => _goToPage(paises.length - 1, paises.length),
-            icon: const Icon(Icons.last_page),
+            enabled: safeIndex < paises.length - 1,
+            onPressed: safeIndex >= paises.length - 1 ? null : () => _goToPage(paises.length - 1, paises.length),
+            icon: Icons.last_page,
           ),
         ],
       ),
@@ -528,15 +525,17 @@ class _TeamPageNavigation extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  IconButton(
+                  _NavButton(
                     tooltip: 'Primer equipo',
+                    enabled: onFirst != null,
                     onPressed: onFirst,
-                    icon: const Icon(Icons.first_page),
+                    icon: Icons.first_page,
                   ),
-                  IconButton(
+                  _NavButton(
                     tooltip: 'Equipo anterior',
+                    enabled: onPrevious != null,
                     onPressed: onPrevious,
-                    icon: const Icon(Icons.arrow_back_ios_new),
+                    icon: Icons.arrow_back_ios_new,
                   ),
                   Expanded(
                     child: Column(
@@ -560,15 +559,17 @@ class _TeamPageNavigation extends StatelessWidget {
                       ],
                     ),
                   ),
-                  IconButton(
+                  _NavButton(
                     tooltip: 'Equipo siguiente',
+                    enabled: onNext != null,
                     onPressed: onNext,
-                    icon: const Icon(Icons.arrow_forward_ios),
+                    icon: Icons.arrow_forward_ios,
                   ),
-                  IconButton(
+                  _NavButton(
                     tooltip: 'Ultimo equipo',
+                    enabled: onLast != null,
                     onPressed: onLast,
-                    icon: const Icon(Icons.last_page),
+                    icon: Icons.last_page,
                   ),
                 ],
               ),
@@ -1754,3 +1755,32 @@ String _buildFaltantesShare(List<Lamina> items, List<Pais> paises) {
   }
   return buffer.toString();
 }
+
+class _NavButton extends StatefulWidget {
+  final String tooltip;
+  final bool enabled;
+  final VoidCallback? onPressed;
+  final IconData icon;
+
+  const _NavButton({
+    required this.tooltip,
+    required this.enabled,
+    required this.onPressed,
+    required this.icon,
+  });
+
+  @override
+  State<_NavButton> createState() => _NavButtonState();
+}
+
+class _NavButtonState extends State<_NavButton> {
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      tooltip: widget.tooltip,
+      onPressed: widget.enabled ? widget.onPressed : null,
+      icon: Icon(widget.icon),
+    );
+  }
+}
+
