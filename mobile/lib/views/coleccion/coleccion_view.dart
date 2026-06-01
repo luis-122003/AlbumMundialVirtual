@@ -359,6 +359,10 @@ class _EquipoAlbumViewState extends State<EquipoAlbumView> {
   @override
   void initState() {
     super.initState();
+    _initializePageController();
+  }
+
+  void _initializePageController() {
     final paises = context.read<LaminaController>().paises;
     _pageIndex = math.max(
       0,
@@ -369,7 +373,9 @@ class _EquipoAlbumViewState extends State<EquipoAlbumView> {
 
   @override
   void dispose() {
-    _pageController.dispose();
+    if (_pageController != null) {
+      _pageController.dispose();
+    }
     super.dispose();
   }
 
@@ -384,12 +390,17 @@ class _EquipoAlbumViewState extends State<EquipoAlbumView> {
   void _goToPage(int index, int total) {
     if (total == 0) return;
     final target = index.clamp(0, total - 1);
-    if (!_pageController.hasClients) return;
-    _pageController.animateToPage(
-      target,
-      duration: const Duration(milliseconds: 280),
-      curve: Curves.easeOutCubic,
-    ).catchError((_) {});
+    if (!_pageController.hasClients) {
+      setState(() => _pageIndex = target);
+      return;
+    }
+    try {
+      _pageController.jumpToPage(target);
+    } catch (e) {
+      if (mounted) {
+        setState(() => _pageIndex = target);
+      }
+    }
   }
 
   @override
@@ -447,8 +458,9 @@ class _EquipoAlbumViewState extends State<EquipoAlbumView> {
           : PageView.builder(
               controller: _pageController,
               itemCount: paises.length,
+              physics: const ClampingScrollPhysics(),
               onPageChanged: (index) {
-                if (mounted) {
+                if (mounted && _pageIndex != index) {
                   setState(() => _pageIndex = index);
                 }
               },
