@@ -25,117 +25,206 @@ class _LoginViewState extends State<LoginView> {
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
-    final auth = context.read<AuthController>();
-    await auth.login(_emailCtrl.text, _passCtrl.text);
+    await context.read<AuthController>().login(_emailCtrl.text, _passCtrl.text);
   }
 
   @override
   Widget build(BuildContext context) {
     final auth = context.watch<AuthController>();
-    final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
-            child: Form(
-              key: _formKey,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFF0D1B2A), Color(0xFF1E3A5F), Color(0xFF0A1628)],
+            stops: [0.0, 0.55, 1.0],
+          ),
+        ),
+        child: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
               child: Column(
                 children: [
-                  const SizedBox(height: 16),
-                  CircleAvatar(
-                    radius: 42,
-                    backgroundColor: cs.primaryContainer,
-                    child: Icon(Icons.sports_soccer,
-                        size: 46, color: cs.onPrimaryContainer),
+                  // ── Logo ───────────────────────────────────────────────
+                  Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFC9A227),
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFFC9A227).withValues(alpha: 0.4),
+                          blurRadius: 24,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.sports_soccer,
+                      size: 44,
+                      color: Color(0xFF0D1B2A),
+                    ),
                   ),
-                  const SizedBox(height: 20),
-                  Text(
+                  const SizedBox(height: 18),
+                  const Text(
                     'Panini Mundial 2026',
-                    style: Theme.of(context)
-                        .textTheme
-                        .headlineSmall
-                        ?.copyWith(fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.3,
+                    ),
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 4),
                   Text(
-                    'Inicia sesión para continuar',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyMedium
-                        ?.copyWith(color: cs.onSurfaceVariant),
+                    'Tu álbum digital de colección',
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.55),
+                      fontSize: 13,
+                    ),
                   ),
                   const SizedBox(height: 36),
-                  TextFormField(
-                    controller: _emailCtrl,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
-                      labelText: 'Correo electrónico',
-                      prefixIcon: Icon(Icons.email_outlined),
-                      border: OutlineInputBorder(),
+
+                  // ── Form Card ──────────────────────────────────────────
+                  Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.25),
+                          blurRadius: 24,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
                     ),
-                    validator: (v) =>
-                        (v == null || !v.contains('@')) ? 'Email inválido' : null,
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _passCtrl,
-                    obscureText: _obscure,
-                    decoration: InputDecoration(
-                      labelText: 'Contraseña',
-                      prefixIcon: const Icon(Icons.lock_outline),
-                      border: const OutlineInputBorder(),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                            _obscure ? Icons.visibility_off : Icons.visibility),
-                        onPressed: () => setState(() => _obscure = !_obscure),
-                      ),
-                    ),
-                    validator: (v) =>
-                        (v == null || v.length < 6) ? 'Mínimo 6 caracteres' : null,
-                  ),
-                  if (auth.error != null) ...[
-                    const SizedBox(height: 12),
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: cs.errorContainer,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Row(
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(Icons.error_outline, color: cs.error, size: 18),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              auth.error!,
-                              style: TextStyle(color: cs.onErrorContainer),
+                          const Text(
+                            'Iniciar sesión',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF0D1B2A),
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Ingresa tus credenciales para continuar',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey.shade500,
+                            ),
+                          ),
+                          const SizedBox(height: 22),
+                          TextFormField(
+                            controller: _emailCtrl,
+                            keyboardType: TextInputType.emailAddress,
+                            decoration: const InputDecoration(
+                              labelText: 'Correo electrónico',
+                              prefixIcon: Icon(Icons.email_outlined),
+                            ),
+                            validator: (v) => (v == null || !v.contains('@'))
+                                ? 'Email inválido'
+                                : null,
+                          ),
+                          const SizedBox(height: 14),
+                          TextFormField(
+                            controller: _passCtrl,
+                            obscureText: _obscure,
+                            decoration: InputDecoration(
+                              labelText: 'Contraseña',
+                              prefixIcon: const Icon(Icons.lock_outline),
+                              suffixIcon: IconButton(
+                                icon: Icon(_obscure
+                                    ? Icons.visibility_off_outlined
+                                    : Icons.visibility_outlined),
+                                onPressed: () =>
+                                    setState(() => _obscure = !_obscure),
+                              ),
+                            ),
+                            validator: (v) => (v == null || v.length < 6)
+                                ? 'Mínimo 6 caracteres'
+                                : null,
+                          ),
+                          if (auth.error != null) ...[
+                            const SizedBox(height: 14),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 10),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFFFEBEE),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: const Color(0xFFEF9A9A),
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.error_outline,
+                                      color: Color(0xFFD32F2F), size: 18),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      auth.error!,
+                                      style: const TextStyle(
+                                        color: Color(0xFFB71C1C),
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                          const SizedBox(height: 22),
+                          SizedBox(
+                            width: double.infinity,
+                            height: 50,
+                            child: FilledButton(
+                              onPressed: auth.loading ? null : _submit,
+                              child: auth.loading
+                                  ? const SizedBox(
+                                      width: 22,
+                                      height: 22,
+                                      child: CircularProgressIndicator(
+                                          strokeWidth: 2, color: Colors.white),
+                                    )
+                                  : const Text('Iniciar sesión'),
                             ),
                           ),
                         ],
                       ),
                     ),
-                  ],
-                  const SizedBox(height: 24),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 48,
-                    child: FilledButton(
-                      onPressed: auth.loading ? null : _submit,
-                      child: auth.loading
-                          ? const SizedBox(
-                              width: 22,
-                              height: 22,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Text('Iniciar sesión'),
-                    ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 20),
                   TextButton(
                     onPressed: widget.onGoToRegister,
-                    child: const Text('¿No tienes cuenta? Regístrate'),
+                    child: RichText(
+                      text: TextSpan(
+                        text: '¿No tienes cuenta? ',
+                        style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.6),
+                            fontSize: 13),
+                        children: const [
+                          TextSpan(
+                            text: 'Regístrate',
+                            style: TextStyle(
+                              color: Color(0xFFC9A227),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               ),

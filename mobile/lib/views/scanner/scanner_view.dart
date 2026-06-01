@@ -52,7 +52,7 @@ class _ScannerViewState extends State<ScannerView> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(err ?? 'Error al escanear'),
-          backgroundColor: Theme.of(context).colorScheme.error,
+          backgroundColor: const Color(0xFFD32F2F),
         ),
       );
     }
@@ -60,110 +60,234 @@ class _ScannerViewState extends State<ScannerView> {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-
     return Scaffold(
       appBar: AppBar(title: const Text('Escáner QR')),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            // Placeholder cámara
+            // ── QR Frame Placeholder ──────────────────────────────────
             Container(
-              height: 220,
+              height: 240,
               width: double.infinity,
               decoration: BoxDecoration(
-                color: cs.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: cs.outline),
+                color: const Color(0xFF0D1B2A),
+                borderRadius: BorderRadius.circular(20),
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+              child: Stack(
+                alignment: Alignment.center,
                 children: [
-                  Icon(Icons.qr_code_scanner,
-                      size: 72, color: cs.onSurfaceVariant),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Escáner QR — Próximamente',
-                    style: TextStyle(color: cs.onSurfaceVariant),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Simula un escaneo abajo',
-                    style: TextStyle(
-                        color: cs.onSurfaceVariant, fontSize: 12),
+                  // Corner decorations
+                  ..._buildCorners(),
+                  // Inner content
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.qr_code_scanner,
+                        size: 64,
+                        color: Colors.white.withValues(alpha: 0.15),
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Escáner QR',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 5),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFC9A227)
+                              .withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: const Color(0xFFC9A227)
+                                .withValues(alpha: 0.4),
+                          ),
+                        ),
+                        child: const Text(
+                          'Próximamente',
+                          style: TextStyle(
+                            color: Color(0xFFC9A227),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 28),
-            Text(
-              'Simular escaneo',
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium
-                  ?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'Introduce los datos del QR manualmente',
-              style: TextStyle(color: cs.onSurfaceVariant, fontSize: 13),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  flex: 2,
-                  child: TextFormField(
-                    controller: _iso3Ctrl,
-                    textCapitalization: TextCapitalization.characters,
-                    maxLength: 3,
-                    decoration: const InputDecoration(
-                      labelText: 'ISO3',
-                      hintText: 'MEX',
-                      border: OutlineInputBorder(),
-                      counterText: '',
+
+            // ── Simulador ─────────────────────────────────────────────
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF0D1B2A).withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(Icons.tune,
+                            size: 18, color: Color(0xFF0D1B2A)),
+                      ),
+                      const SizedBox(width: 10),
+                      const Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Simular escaneo',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF0D1B2A),
+                            ),
+                          ),
+                          Text(
+                            'Introduce los datos del QR manualmente',
+                            style: TextStyle(
+                                fontSize: 11, color: Color(0xFF90A4AE)),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 18),
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: TextFormField(
+                          controller: _iso3Ctrl,
+                          textCapitalization: TextCapitalization.characters,
+                          maxLength: 3,
+                          decoration: const InputDecoration(
+                            labelText: 'ISO3',
+                            hintText: 'MEX',
+                            counterText: '',
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: TextFormField(
+                          controller: _numCtrl,
+                          keyboardType: TextInputType.number,
+                          decoration: const InputDecoration(
+                            labelText: 'Nro.',
+                            hintText: '1',
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 18),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: FilledButton.icon(
+                      onPressed: _scanning ? null : _simularEscaneo,
+                      icon: _scanning
+                          ? const SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(
+                                  strokeWidth: 2, color: Colors.white),
+                            )
+                          : const Icon(Icons.qr_code),
+                      label: Text(_scanning ? 'Escaneando...' : 'Simular escaneo'),
                     ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: TextFormField(
-                    controller: _numCtrl,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      labelText: 'Nro.',
-                      hintText: '1',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
-              height: 48,
-              child: FilledButton.icon(
-                onPressed: _scanning ? null : _simularEscaneo,
-                icon: _scanning
-                    ? const SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Icon(Icons.qr_code),
-                label: Text(_scanning ? 'Escaneando...' : 'Simular escaneo'),
+                ],
               ),
             ),
+
+            // ── Resultado ─────────────────────────────────────────────
             if (_resultado != null) ...[
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
               _ResultadoCard(data: _resultado!),
             ],
+            const SizedBox(height: 16),
           ],
         ),
       ),
     );
+  }
+
+  List<Widget> _buildCorners() {
+    const size = 28.0;
+    const stroke = 3.0;
+    const color = Color(0xFFC9A227);
+    const radius = Radius.circular(4);
+
+    Widget corner(AlignmentGeometry align, BorderRadius borderRadius) =>
+        Positioned(
+          child: Align(
+            alignment: align,
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: SizedBox(
+                width: size,
+                height: size,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    border: Border(
+                      top: borderRadius.topLeft != Radius.zero
+                          ? const BorderSide(color: color, width: stroke)
+                          : BorderSide.none,
+                      bottom: borderRadius.bottomLeft != Radius.zero
+                          ? const BorderSide(color: color, width: stroke)
+                          : BorderSide.none,
+                      left: (borderRadius.topLeft != Radius.zero ||
+                              borderRadius.bottomLeft != Radius.zero)
+                          ? const BorderSide(color: color, width: stroke)
+                          : BorderSide.none,
+                      right: (borderRadius.topRight != Radius.zero ||
+                              borderRadius.bottomRight != Radius.zero)
+                          ? const BorderSide(color: color, width: stroke)
+                          : BorderSide.none,
+                    ),
+                    borderRadius: borderRadius,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+
+    return [
+      corner(Alignment.topLeft,
+          const BorderRadius.only(topLeft: radius)),
+      corner(Alignment.topRight,
+          const BorderRadius.only(topRight: radius)),
+      corner(Alignment.bottomLeft,
+          const BorderRadius.only(bottomLeft: radius)),
+      corner(Alignment.bottomRight,
+          const BorderRadius.only(bottomRight: radius)),
+    ];
   }
 }
 
@@ -173,60 +297,110 @@ class _ResultadoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
     final esNueva = data['estado'] == 'nueva';
     final lamina = data['lamina'] as Map<String, dynamic>?;
+    final bgColor =
+        esNueva ? const Color(0xFFE8F5E9) : const Color(0xFFFFF8E1);
+    final borderColor =
+        esNueva ? const Color(0xFF81C784) : const Color(0xFFFFCA28);
+    final iconColor =
+        esNueva ? const Color(0xFF2E7D32) : const Color(0xFFF57F17);
+    final label = esNueva ? '¡Lámina nueva!' : 'Lámina repetida';
+    final icon = esNueva ? Icons.new_releases_rounded : Icons.repeat_rounded;
 
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      padding: const EdgeInsets.all(16),
+      duration: const Duration(milliseconds: 350),
+      curve: Curves.easeOut,
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: esNueva ? Colors.green.shade50 : Colors.orange.shade50,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: esNueva ? Colors.green.shade300 : Colors.orange.shade300,
-        ),
+        color: bgColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: borderColor, width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: borderColor.withValues(alpha: 0.25),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(
-                esNueva ? Icons.new_releases : Icons.repeat,
-                color: esNueva ? Colors.green.shade700 : Colors.orange.shade700,
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: iconColor.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(icon, color: iconColor, size: 20),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 12),
               Text(
-                esNueva ? '¡Lámina nueva!' : 'Lámina repetida',
+                label,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: esNueva
-                      ? Colors.green.shade700
-                      : Colors.orange.shade700,
+                  fontSize: 16,
+                  color: iconColor,
                 ),
               ),
             ],
           ),
           if (lamina != null) ...[
-            const SizedBox(height: 10),
-            Text(
-              lamina['nombre_sticker'] as String? ?? '',
-              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'ID: ${lamina['id']}  ·  ${lamina['iso3']}',
-              style: TextStyle(color: cs.onSurfaceVariant, fontSize: 13),
-            ),
-            if (!esNueva)
-              Padding(
-                padding: const EdgeInsets.only(top: 6),
-                child: Text(
-                  'Repetidas: ${data['cantidad_repetidas']}',
-                  style: TextStyle(color: Colors.orange.shade700),
-                ),
+            const SizedBox(height: 14),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.7),
+                borderRadius: BorderRadius.circular(10),
               ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          lamina['nombre_sticker'] as String? ?? '',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                            color: Color(0xFF0D1B2A),
+                          ),
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          'ID: ${lamina['id']}  ·  ${lamina['iso3']}',
+                          style: const TextStyle(
+                            color: Color(0xFF78909C),
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (!esNueva)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: iconColor.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        'x${data['cantidad_repetidas']}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: iconColor,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
           ],
         ],
       ),
