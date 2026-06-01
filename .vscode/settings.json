@@ -3,9 +3,23 @@
     "cSpell.words": [
         "Adoptium",
         "allprojects",
+        "APARTMENTTHREADED",
+        "APSTUDIO",
+        "COINIT",
+        "coleccion",
+        "Colección",
+        "Copa",
         "dists",
+        "Escáner",
+        "HINSTANCE",
         "hotspot",
+        "Inicio",
         "jvmargs",
-        "Metaspace"
-    ]
+        "Metaspace",
+        "mundial",
+        "panini",
+        "perfil"
+    ],
+    "java.compile.nullAnalysis.mode": "automatic",
+    "cmake.ignoreCMakeListsMissing": true
 }
