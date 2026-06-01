@@ -384,16 +384,26 @@ class _EquipoAlbumViewState extends State<EquipoAlbumView> {
   void _goToPage(int index, int total) {
     if (total == 0) return;
     final target = index.clamp(0, total - 1);
+    if (!_pageController.hasClients) return;
     _pageController.animateToPage(
       target,
       duration: const Duration(milliseconds: 280),
       curve: Curves.easeOutCubic,
-    );
+    ).catchError((_) {});
   }
 
   @override
   Widget build(BuildContext context) {
     final paises = context.watch<LaminaController>().paises;
+
+    // Sincronizar el índice si los paises cambiaron
+    if (paises.isNotEmpty && _pageIndex >= paises.length) {
+      _pageIndex = paises.length - 1;
+      if (_pageController.hasClients) {
+        _pageController.jumpToPage(_pageIndex);
+      }
+    }
+
     final safeIndex = paises.isEmpty
         ? 0
         : math.min(math.max(_pageIndex, 0), paises.length - 1);
@@ -437,7 +447,11 @@ class _EquipoAlbumViewState extends State<EquipoAlbumView> {
           : PageView.builder(
               controller: _pageController,
               itemCount: paises.length,
-              onPageChanged: (index) => setState(() => _pageIndex = index),
+              onPageChanged: (index) {
+                if (mounted) {
+                  setState(() => _pageIndex = index);
+                }
+              },
               itemBuilder: (_, index) {
                 return _EquipoAlbumPage(
                   pais: paises[index],
