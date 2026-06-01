@@ -4,12 +4,14 @@ import 'package:provider/provider.dart';
 import 'controllers/auth_controller.dart';
 import 'controllers/coleccion_controller.dart';
 import 'controllers/lamina_controller.dart';
+import 'controllers/intercambio_controller.dart';
 import 'views/auth/login_view.dart';
 import 'views/auth/register_view.dart';
 import 'views/home/home_view.dart';
 import 'views/coleccion/coleccion_view.dart';
 import 'views/scanner/scanner_view.dart';
 import 'views/perfil/perfil_view.dart';
+import 'views/intercambios/intercambios_view.dart';
 
 void main() {
   runApp(
@@ -18,6 +20,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => AuthController()),
         ChangeNotifierProvider(create: (_) => ColeccionController()),
         ChangeNotifierProvider(create: (_) => LaminaController()),
+        ChangeNotifierProvider(create: (_) => IntercambioController()),
       ],
       child: const PaniniApp(),
     ),
@@ -119,6 +122,7 @@ class _MainShellState extends State<_MainShell> {
     HomeView(),
     ColeccionView(),
     ScannerView(),
+    IntercambiosView(),
     PerfilView(),
   ];
 
@@ -147,6 +151,11 @@ class _MainShellState extends State<_MainShell> {
             icon: Icon(Icons.qr_code_scanner_outlined),
             selectedIcon: Icon(Icons.qr_code_scanner),
             label: 'Escáner',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.swap_horiz_outlined),
+            selectedIcon: Icon(Icons.swap_horiz),
+            label: 'Intercambios',
           ),
           NavigationDestination(
             icon: Icon(Icons.person_outline),
