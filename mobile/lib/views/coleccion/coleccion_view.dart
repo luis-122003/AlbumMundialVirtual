@@ -387,22 +387,6 @@ class _EquipoAlbumViewState extends State<EquipoAlbumView> {
     ]);
   }
 
-  void _goToPage(int index, int total) {
-    if (total == 0) return;
-    final target = index.clamp(0, total - 1);
-    if (!_pageController.hasClients) {
-      setState(() => _pageIndex = target);
-      return;
-    }
-    try {
-      _pageController.jumpToPage(target);
-    } catch (e) {
-      if (mounted) {
-        setState(() => _pageIndex = target);
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final paises = context.watch<LaminaController>().paises;
@@ -423,32 +407,6 @@ class _EquipoAlbumViewState extends State<EquipoAlbumView> {
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
-        actions: [
-          _NavButton(
-            tooltip: 'Primer equipo',
-            enabled: safeIndex != 0,
-            onPressed: safeIndex == 0 ? null : () => _goToPage(0, paises.length),
-            icon: Icons.first_page,
-          ),
-          _NavButton(
-            tooltip: 'Equipo anterior',
-            enabled: safeIndex != 0,
-            onPressed: safeIndex == 0 ? null : () => _goToPage(safeIndex - 1, paises.length),
-            icon: Icons.chevron_left,
-          ),
-          _NavButton(
-            tooltip: 'Equipo siguiente',
-            enabled: safeIndex < paises.length - 1,
-            onPressed: safeIndex >= paises.length - 1 ? null : () => _goToPage(safeIndex + 1, paises.length),
-            icon: Icons.chevron_right,
-          ),
-          _NavButton(
-            tooltip: 'Ultimo equipo',
-            enabled: safeIndex < paises.length - 1,
-            onPressed: safeIndex >= paises.length - 1 ? null : () => _goToPage(paises.length - 1, paises.length),
-            icon: Icons.last_page,
-          ),
-        ],
       ),
       body: paises.isEmpty
           ? const Center(child: CircularProgressIndicator())
@@ -468,158 +426,6 @@ class _EquipoAlbumViewState extends State<EquipoAlbumView> {
                 );
               },
             ),
-      bottomNavigationBar: paises.isEmpty
-          ? null
-          : _TeamPageNavigation(
-              currentIndex: safeIndex,
-              total: paises.length,
-              currentLabel:
-                  '${paises[safeIndex].iso3} · ${paises[safeIndex].pais}',
-              onFirst:
-                  safeIndex == 0 ? null : () => _goToPage(0, paises.length),
-              onPrevious: safeIndex == 0
-                  ? null
-                  : () => _goToPage(safeIndex - 1, paises.length),
-              onNext: safeIndex >= paises.length - 1
-                  ? null
-                  : () => _goToPage(safeIndex + 1, paises.length),
-              onLast: safeIndex >= paises.length - 1
-                  ? null
-                  : () => _goToPage(paises.length - 1, paises.length),
-            ),
-    );
-  }
-}
-
-class _TeamPageNavigation extends StatelessWidget {
-  final int currentIndex;
-  final int total;
-  final String currentLabel;
-  final VoidCallback? onFirst;
-  final VoidCallback? onPrevious;
-  final VoidCallback? onNext;
-  final VoidCallback? onLast;
-
-  const _TeamPageNavigation({
-    required this.currentIndex,
-    required this.total,
-    required this.currentLabel,
-    required this.onFirst,
-    required this.onPrevious,
-    required this.onNext,
-    required this.onLast,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    return SafeArea(
-      top: false,
-      child: Material(
-        color: cs.surface,
-        elevation: 3,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(8, 8, 8, 10),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                children: [
-                  _NavButton(
-                    tooltip: 'Primer equipo',
-                    enabled: onFirst != null,
-                    onPressed: onFirst,
-                    icon: Icons.first_page,
-                  ),
-                  _NavButton(
-                    tooltip: 'Equipo anterior',
-                    enabled: onPrevious != null,
-                    onPressed: onPrevious,
-                    icon: Icons.arrow_back_ios_new,
-                  ),
-                  Expanded(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          currentLabel,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(fontWeight: FontWeight.w700),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '${currentIndex + 1} de $total',
-                          style: TextStyle(
-                            color: cs.onSurfaceVariant,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  _NavButton(
-                    tooltip: 'Equipo siguiente',
-                    enabled: onNext != null,
-                    onPressed: onNext,
-                    icon: Icons.arrow_forward_ios,
-                  ),
-                  _NavButton(
-                    tooltip: 'Ultimo equipo',
-                    enabled: onLast != null,
-                    onPressed: onLast,
-                    icon: Icons.last_page,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 4),
-              _PageDots(currentIndex: currentIndex, total: total),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _PageDots extends StatelessWidget {
-  final int currentIndex;
-  final int total;
-
-  const _PageDots({required this.currentIndex, required this.total});
-
-  @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    const visibleDots = 7;
-    final start = total <= visibleDots
-        ? 0
-        : math.min(
-            math.max(currentIndex - visibleDots ~/ 2, 0),
-            total - visibleDots,
-          );
-    final end = math.min(total, start + visibleDots);
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        if (start > 0)
-          Icon(Icons.more_horiz, size: 14, color: cs.onSurfaceVariant),
-        for (var i = start; i < end; i++)
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 180),
-            width: i == currentIndex ? 18 : 7,
-            height: 7,
-            margin: const EdgeInsets.symmetric(horizontal: 3),
-            decoration: BoxDecoration(
-              color: i == currentIndex ? cs.primary : cs.outlineVariant,
-              borderRadius: BorderRadius.circular(999),
-            ),
-          ),
-        if (end < total)
-          Icon(Icons.more_horiz, size: 14, color: cs.onSurfaceVariant),
-      ],
     );
   }
 }
@@ -1755,32 +1561,3 @@ String _buildFaltantesShare(List<Lamina> items, List<Pais> paises) {
   }
   return buffer.toString();
 }
-
-class _NavButton extends StatefulWidget {
-  final String tooltip;
-  final bool enabled;
-  final VoidCallback? onPressed;
-  final IconData icon;
-
-  const _NavButton({
-    required this.tooltip,
-    required this.enabled,
-    required this.onPressed,
-    required this.icon,
-  });
-
-  @override
-  State<_NavButton> createState() => _NavButtonState();
-}
-
-class _NavButtonState extends State<_NavButton> {
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      tooltip: widget.tooltip,
-      onPressed: widget.enabled ? widget.onPressed : null,
-      icon: Icon(widget.icon),
-    );
-  }
-}
-
