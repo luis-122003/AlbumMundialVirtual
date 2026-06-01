@@ -124,20 +124,20 @@ class _AlbumOverview extends StatelessWidget {
                     crossAxisSpacing: 10,
                     childAspectRatio: columns == 1 ? 3.25 : 2.85,
                   ),
-                  itemBuilder: (_, i) {
-                    final pais = paises[i];
-                    final stats = _statsForPais(
-                      pais.iso3,
-                      coleccion,
-                      laminasCtrl.laminas,
-                      progreso,
-                    );
-                    return ScaleInAnimation(
-                      beginScale: 0.9,
-                      child: _PaisAlbumCard(
-                        pais: pais,
-                        obtenidas: stats.obtenidas,
-                        total: stats.total,
+                 itemBuilder: (_, i) {
+                  final pais = paises[i];
+                  final stats = _statsForPais(
+                    pais.iso3,
+                    coleccion,
+                    laminasCtrl.laminas,
+                    progreso,
+                  );
+                  return ScaleInAnimation(
+                    beginScale: 0.9,
+                    child: _PaisAlbumCard(
+                      pais: pais,
+                      obtenidas: stats.obtenidas,
+                      total: stats.total,
                       porcentaje: stats.porcentaje,
                       onTap: () => Navigator.of(context).push(
                         PageRouteBuilder<void>(
@@ -157,9 +157,10 @@ class _AlbumOverview extends StatelessWidget {
                           },
                         ),
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
+              ),
             ],
           );
         },
@@ -167,6 +168,8 @@ class _AlbumOverview extends StatelessWidget {
     );
   }
 }
+
+
 
 class _GlobalProgressHeader extends StatelessWidget {
   final ProgresoData? progreso;
