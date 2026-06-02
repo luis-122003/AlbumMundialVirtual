@@ -305,7 +305,7 @@ class _PaisProgressTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final obtenidas = pais['laminas_obtenidas'] as int? ?? 0;
     final total = pais['total_laminas'] as int? ?? 0;
-    final porcentaje = pais['porcentaje'] as double? ?? 0.0;
+    final porcentaje = (pais['porcentaje'] as num?)?.toDouble() ?? 0.0;
     final nombre = pais['pais'] as String? ?? '';
     final completado = obtenidas == total && total > 0;
 

@@ -250,39 +250,35 @@ class _PaniniCard extends StatelessWidget {
     final color = _countryColor(iso3);
     final initial = nombre.isNotEmpty ? nombre[0].toUpperCase() : '?';
 
-    // Photo area (gradient + initial as fallback)
-    Widget photoArea = Container(
+    // Área de foto: fondo blanco con círculo de color del país (sin carga de red)
+    final Widget photoArea = Container(
       width: double.infinity,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            color.withValues(alpha: 0.85),
-            color.withValues(alpha: 0.45),
-          ],
-        ),
-      ),
+      color: const Color(0xFFF8F9FA),
       child: Center(
-        child: Text(
-          initial,
-          style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.5),
-            fontSize: 36,
-            fontWeight: FontWeight.bold,
+        child: Container(
+          width: 44,
+          height: 44,
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.15),
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: color.withValues(alpha: 0.3),
+              width: 1.5,
+            ),
+          ),
+          child: Center(
+            child: Text(
+              initial,
+              style: TextStyle(
+                color: color,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ),
       ),
     );
-
-    if (fotoUrl != null && fotoUrl!.isNotEmpty) {
-      photoArea = Image.network(
-        fotoUrl!,
-        fit: BoxFit.cover,
-        width: double.infinity,
-        errorBuilder: (_, __, ___) => photoArea,
-      );
-    }
 
     // Card inner content
     Widget cardContent = Column(
